@@ -1,11 +1,11 @@
-from collections import Counter
 import json
+from collections import Counter
 
 
 def load_text(filename):
     """Загружает текст из файла."""
     try:
-        with open(filename, encoding='utf-8') as f:
+        with open(filename, encoding="utf-8") as f:
             return f.read()
     except FileNotFoundError:
         print(f"Ошибка: файл {filename} не найден")
@@ -21,10 +21,10 @@ def print_stats(text):
     print(f"Всего: {total}, Уникальных: {len(chars)}\n")
     print("Символ           | Кол-во | Частота")
 
-    special = {'\n': 'ПЕРЕВОД СТРОКИ', ' ': 'ПРОБЕЛ', '\t': 'ТАБУЛЯЦИЯ'}
+    special = {"\n": "ПЕРЕВОД СТРОКИ", " ": "ПРОБЕЛ", "\t": "ТАБУЛЯЦИЯ"}
 
     for c, cnt in sorted(chars.items(), key=lambda x: -x[1]):
-        name = special.get(c, c if c.isprintable() else f'\\x{ord(c):02x}')
+        name = special.get(c, c if c.isprintable() else f"\\x{ord(c):02x}")
         print(f"{name:<16} | {cnt:6} | {cnt / total:.4f}")
 
 
@@ -57,9 +57,9 @@ def save_results(reps, text):
     if not reps:
         return
 
-    with open('decrypted.txt', 'w', encoding='utf-8') as f:
+    with open("decrypted.txt", "w", encoding="utf-8") as f:
         f.write(text)
-    with open('key.json', 'w', encoding='utf-8') as f:
+    with open("key.json", "w", encoding="utf-8") as f:
         json.dump(reps, f, ensure_ascii=False, indent=2)
 
     print("\nСохранено: decrypted.txt и key.json")
@@ -67,7 +67,7 @@ def save_results(reps, text):
 
 def main():
     """Основная функция программы."""
-    text = load_text('original.txt')
+    text = load_text("original.txt")
     print_stats(text)
     print("\n\nЗамена Символов")
     reps, new_text = replace_interactive(text)

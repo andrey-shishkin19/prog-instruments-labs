@@ -5,7 +5,7 @@ import sys
 def load_key(key_file):
     """Загружает ключ из JSON файла."""
     try:
-        with open(key_file, 'r', encoding='utf-8') as f:
+        with open(key_file, "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         print(f"Ошибка: Файл {key_file} не найден")
@@ -25,7 +25,7 @@ def decrypt_text(encrypted_text, key):
         else:
             decrypted.append(char)
 
-    return ''.join(decrypted)
+    return "".join(decrypted)
 
 
 def main():
@@ -40,7 +40,7 @@ def main():
 
     print(f"Читаем зашифрованный текст из {input_file}.")
     try:
-        with open(input_file, 'r', encoding='utf-8') as f:
+        with open(input_file, "r", encoding="utf-8") as f:
             encrypted_text = f.read()
     except FileNotFoundError:
         print(f"Ошибка: Файл {input_file} не найден")
@@ -50,7 +50,7 @@ def main():
     decrypted_text = decrypt_text(encrypted_text, key)
 
     print(f"Сохраняем результат в {output_file}.")
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         f.write(decrypted_text)
 
     print("\nРасшифрованный текст:")
