@@ -1,62 +1,53 @@
+from collections import Counter
 import json
-import sys
 
-
-def load_key(key_file):
-    """Загружает ключ из JSON файла."""
+def load_text(filename):
     try:
-        with open(key_file, "r", encoding="utf-8") as f:
-            return json.load(f)
+        with open(filename, encoding='utf-8') as f:
+            return f.read()
     except FileNotFoundError:
-        print(f"Ошибка: Файл {key_file} не найден")
-        sys.exit(1)
-    except json.JSONDecodeError:
-        print(f"Ошибка: Файл {key_file} содержит некорректный JSON")
-        sys.exit(1)
+        print(f"Ошибка: файл {filename} не найден")
+        raise
 
+def print_stats(text):
+    total = len(text)
+    chars = Counter(text)
+    print(f"Всего: {total}, Уникальных: {len(chars)}\n")
+    for c, cnt in sorted(chars.items(), key=lambda x: -x[1]):
+        print(f"{c:<16} | {cnt:6} | {cnt / total:.4f}")
 
-def decrypt_text(encrypted_text, key):
-    """Дешифрует текст с использованием ключа."""
-    decrypted = []
-
-    for char in encrypted_text:
-        if char in key:
-            decrypted.append(key[char])
+def replace_interactive(text):
+    reps = {}
+    while True:
+        print(f"\nТекст:\n{text[:200]}\n")
+        old = input("\nСимвол для замены (Enter - выход): ")
+        if not old:
+            break
+        
+        if old == " ":
+            new = input("Заменить ПРОБЕЛ на: ")
+            reps[old] = new
+            text = text.replace(old, new)
+        elif old == "\n":
+            new = input("Заменить ПЕРЕВОД СТРОКИ на: ")
+            reps[old] = new
+            text = text.replace(old, new)
         else:
-            decrypted.append(char)
-
-    return "".join(decrypted)
-
+            new = input(f"Заменить '{old}' на: ")
+            reps[old] = new
+            text = text.replace(old, new)
+            
+    return reps, text
 
 def main():
-    """Основная функция программы."""
-    key_file = "key.json"
-    input_file = "original.txt"
-    output_file = "decrypted.txt"
-
-    print(f"Загружаем ключ из {key_file}.")
-    key = load_key(key_file)
-    print(f"Загружено {len(key)} замен")
-
-    print(f"Читаем зашифрованный текст из {input_file}.")
-    try:
-        with open(input_file, "r", encoding="utf-8") as f:
-            encrypted_text = f.read()
-    except FileNotFoundError:
-        print(f"Ошибка: Файл {input_file} не найден")
-        sys.exit(1)
-
-    print("Дешифруем текст.")
-    decrypted_text = decrypt_text(encrypted_text, key)
-
-    print(f"Сохраняем результат в {output_file}.")
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(decrypted_text)
-
-    print("\nРасшифрованный текст:")
-    print(decrypted_text)
-    print(f"\nТекст сохранен в {output_file}")
-
+    text = load_text('original.txt')
+    print_stats(text)
+    reps, new_text = replace_interactive(text)
+    
+    with open('decrypted.txt', 'w', encoding='utf-8') as f:
+        f.write(new_text)
+    with open('key.json', 'w', encoding='utf-8') as f:
+        json.dump(reps, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     main()
